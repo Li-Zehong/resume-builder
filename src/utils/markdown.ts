@@ -168,34 +168,49 @@ function calculateFlexColumnWidths(html: string): number[] {
   const contentWidth = 714;
   let pcts = padded.map(w => Math.round(w / contentWidth * 100));
 
-  // 最小宽度保障
-  pcts = pcts.map((p, i) => Math.max(p, i === 3 ? 14 : 10));
+  // 每列最小宽度百分比（基于内容类型：公司名、部门、职位、日期）
+  const minPcts = [14, 16, 16, 14];
 
-  // 归一化到 100%，多余空间均匀分配给所有列，保持间距一致
-  const sum = pcts.reduce((a, b) => a + b, 0);
-  if (sum !== 100) {
+  // 归一化到 100%，同时确保不低于最小宽度
+  const normalize = (arr: number[]): number[] => {
+    // 先应用最小宽度
+    let result = arr.map((p, i) => Math.max(p, minPcts[i]));
+    const sum = result.reduce((a, b) => a + b, 0);
+
     if (sum > 100) {
-      const scale = 100 / sum;
-      pcts = pcts.map(p => Math.round(p * scale));
-    }
-    // 均匀分配剩余空间
-    const remaining = 100 - pcts.reduce((a, b) => a + b, 0);
-    const perCol = Math.floor(Math.abs(remaining) / 4) * Math.sign(remaining);
-    pcts = pcts.map(p => p + perCol);
-    // 修正四舍五入误差（分配给中间两列优先，它们居中显示受益最大）
-    const finalAdj = 100 - pcts.reduce((a, b) => a + b, 0);
-    if (finalAdj > 0) {
-      // 优先给中间两列
-      for (let r = 0; r < finalAdj; r++) {
-        pcts[1 + (r % 2)] += 1;
-      }
-    } else if (finalAdj < 0) {
-      // 缩减第4列
-      pcts[3] += finalAdj;
-    }
-  }
+      // 超出时：只缩减超过最小值的部分，最小值部分不参与缩减
+      const excess = result.map((p, i) => p - minPcts[i]); // 每列可缩减量
+      const totalExcess = excess.reduce((a, b) => a + b, 0);
+      const needReduce = sum - 100;
 
-  return pcts;
+      if (totalExcess > 0) {
+        const scale = Math.min(1, needReduce / totalExcess);
+        result = result.map((p, i) => Math.round(p - excess[i] * scale));
+      }
+    }
+
+    // 均匀分配剩余空间
+    const remaining = 100 - result.reduce((a, b) => a + b, 0);
+    if (remaining !== 0) {
+      const perCol = Math.floor(Math.abs(remaining) / 4) * Math.sign(remaining);
+      result = result.map(p => p + perCol);
+      // 修正四舍五入误差
+      const finalAdj = 100 - result.reduce((a, b) => a + b, 0);
+      if (finalAdj > 0) {
+        for (let r = 0; r < finalAdj; r++) {
+          result[1 + (r % 2)] += 1;
+        }
+      } else if (finalAdj < 0) {
+        for (let r = 0; r < -finalAdj; r++) {
+          result[3 - (r % 2)] -= 1;
+        }
+      }
+    }
+
+    return result;
+  };
+
+  return normalize(pcts);
 }
 
 // 将 @icon{name} 替换为内联 SVG
