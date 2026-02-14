@@ -1,0 +1,568 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* GitHub Dark Dimmed + Linear 风格配色 */
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #1c2128;
+  --bg-elevated: #21262d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #484f58;
+  --accent: #7c3aed;
+  --accent-hover: #8b5cf6;
+  --accent-subtle: rgba(124, 58, 237, 0.15);
+  --border: #30363d;
+  --border-subtle: rgba(240, 246, 252, 0.1);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* 自定义滚动条 — 精致圆角，类 VS Code 风格 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 148, 158, 0.25);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 148, 158, 0.4);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ==================== 编辑区域叠层 ==================== */
+
+/* 公共字体规范：textarea 和 高亮层 必须完全一致 */
+.editor-textarea,
+.highlight-layer {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 13px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.75;
+  tab-size: 2;
+  letter-spacing: 0.3px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  padding: 20px 24px;
+  padding-bottom: 50vh;
+  margin: 0;
+  border: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* 确保两层文字渲染行为完全一致 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+  font-variant-ligatures: none;
+  font-feature-settings: normal;
+}
+
+/* Textarea：透明文字，只保留光标 */
+.editor-textarea {
+  resize: none;
+  background: transparent;
+  color: transparent;
+  caret-color: #79c0ff;
+  z-index: 2;
+  overflow: auto;
+}
+
+.editor-textarea:focus {
+  outline: none;
+}
+
+.editor-textarea::placeholder {
+  color: #484f58;
+}
+
+.editor-textarea:placeholder-shown {
+  color: #484f58;
+}
+
+/* 高亮层 */
+.highlight-layer {
+  z-index: 1;
+  pointer-events: none;
+  /* ★ 关键修复：使用 overflow-y: auto 让高亮层也产生滚动条占位，
+     与 textarea 的 overflow: auto 保持一致，
+     避免因滚动条宽度差异导致两层文字折行位置不同 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  color: #adbac7;
+  background: transparent;
+}
+
+/* 高亮层滚动条：保留布局空间但视觉上透明（滚动由 JS 同步控制） */
+.highlight-layer::-webkit-scrollbar-thumb {
+  background: transparent !important;
+}
+.highlight-layer::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+/* 高亮层内所有 span 禁止改变字体度量，防止与 textarea 光标位置偏移 */
+.highlight-layer span {
+  font-weight: inherit !important;
+  font-style: inherit !important;
+  font-size: inherit !important;
+  font-family: inherit !important;
+  letter-spacing: inherit !important;
+  line-height: inherit !important;
+}
+
+/* ==================== 语法高亮 · GitHub Dark 融合配色 ==================== */
+
+/* 标题 — 清晰层次 */
+.hl-h1 { color: #f47067; }
+.hl-h2 { color: #6cb6ff; }
+.hl-h3 { color: #6bc46d; }
+
+/* # ## 标记符 — 柔和但可读 */
+.hl-heading-marker { color: #545d68; }
+
+/* 引用 — 去掉 italic 避免字符宽度变化导致光标偏移 */
+.hl-quote { color: #768390; }
+.hl-quote-marker { color: #545d68; }
+
+/* 列表标记 - */
+.hl-list-marker { color: #f47067; }
+
+/* **粗体** — 用 text-shadow 模拟加粗，避免改变字符宽度导致光标偏移 */
+.hl-bold { color: #f0b754; text-shadow: 0.5px 0 0 currentColor; }
+.hl-bold-marker { color: #545d68; }
+
+/* 红色标签 `code` ~~tag~~ */
+.hl-tag-code,
+.hl-tag-red { color: #f47067; }
+
+/* 紫色标签 ^^tag^^ */
+.hl-tag-purple { color: #dcbdfb; }
+
+/* 绿色标签 ++tag++ */
+.hl-tag-green { color: #8ddb8c; }
+
+/* 高亮标签 !!tag!! */
+.hl-tag-highlight {
+  color: #f0b754;
+  background: rgba(240, 183, 84, 0.1);
+  border-radius: 2px;
+}
+
+/* ★ 标签符号 ` ~~ ^^ ++ !! — 高亮度，确保清晰可辨 */
+.hl-tag-marker { color: #8b949e; }
+
+/* @flex / @avatar / @company */
+.hl-flex-keyword { color: #6bc46d; }
+.hl-flex-brace { color: #545d68; }
+.hl-special { color: #6bc46d; }
+
+/* ==================== 工具栏 · VS Code 风格 ==================== */
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-tertiary);
+}
+
+.editor-tool-btn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', 'Cascadia Code', 'Consolas', monospace;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  line-height: 1.4;
+  opacity: 0.7;
+}
+
+.editor-tool-btn:hover {
+  background: rgba(139, 148, 158, 0.12);
+  opacity: 1;
+}
+
+.editor-tool-btn:active {
+  background: rgba(139, 148, 158, 0.2);
+  transform: scale(0.95);
+}
+
+/* 可点击的简历区块样式 - 只改变鼠标样式，不影响原有布局 */
+.resume-preview .clickable-section {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.resume-preview .clickable-section:hover {
+  background-color: rgba(124, 58, 237, 0.05);
+}
+
+/* H2 标题点击 - 不影响 border-bottom */
+.resume-preview h2.clickable-section:hover {
+  background-color: rgba(124, 58, 237, 0.07);
+}
+
+/* Flex 布局点击 */
+.resume-preview .flex-layout.clickable-section:hover {
+  background-color: rgba(124, 58, 237, 0.07);
+}
+
+/* 列表项点击 */
+.resume-preview li.clickable-section:hover {
+  background-color: rgba(124, 58, 237, 0.07);
+}
+
+/* 段落点击 */
+.resume-preview p.clickable-section:hover {
+  background-color: rgba(124, 58, 237, 0.05);
+}
+
+/* ==================== 行高亮指示器 · 点击跳转定位 ==================== */
+
+.editor-line-highlight {
+  position: absolute;
+  left: 0;
+  right: 8px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  background: transparent;
+  border-left: 3px solid transparent;
+  border-radius: 0 4px 4px 0;
+  transition: opacity 0.15s ease;
+}
+
+.editor-line-highlight-active {
+  animation: lineHighlightPulse 2.5s ease-out forwards;
+}
+
+@keyframes lineHighlightPulse {
+  0% {
+    opacity: 0;
+    background: rgba(124, 58, 237, 0.3);
+    border-left-color: #8b5cf6;
+    box-shadow: inset 0 0 12px rgba(124, 58, 237, 0.2);
+  }
+  12% {
+    opacity: 1;
+    background: rgba(124, 58, 237, 0.22);
+    border-left-color: #8b5cf6;
+    box-shadow: inset 0 0 20px rgba(124, 58, 237, 0.15);
+  }
+  30% {
+    opacity: 0.85;
+    background: rgba(124, 58, 237, 0.14);
+    border-left-color: #7c3aed;
+    box-shadow: inset 0 0 8px rgba(124, 58, 237, 0.1);
+  }
+  60% {
+    opacity: 0.5;
+    background: rgba(124, 58, 237, 0.08);
+    border-left-color: #7c3aed;
+    box-shadow: none;
+  }
+  100% {
+    opacity: 0;
+    background: transparent;
+    border-left-color: transparent;
+    box-shadow: none;
+  }
+}
+
+/* ==================== 抽屉编辑器样式 ==================== */
+
+/* 抽屉容器 */
+.drawer-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 45vw;
+  max-width: 720px;
+  min-width: 400px;
+  height: 100vh;
+  z-index: 60;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  padding: 80px 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-container.drawer-open {
+  transform: translateX(0);
+}
+
+/* 抽屉开启时的弹性回弹动画 */
+.drawer-container.drawer-open {
+  animation: drawerSlideIn 0.5s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes drawerSlideIn {
+  0% {
+    transform: translateX(100%);
+  }
+  70% {
+    transform: translateX(-2%);
+  }
+  85% {
+    transform: translateX(0.5%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* 抽屉关闭动画 */
+.drawer-container:not(.drawer-open) {
+  animation: drawerSlideOut 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes drawerSlideOut {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* 主内容区域 - 抽屉打开时平滑左移 */
+.content-area {
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.content-shifted {
+  transform: translateX(calc(clamp(400px, 45vw, 720px) / -2));
+}
+
+/* 抽屉拉手（侧边条）- 精致现代 */
+.drawer-handle {
+  position: absolute;
+  left: -52px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 160px;
+  background: linear-gradient(160deg, var(--accent), #a855f7);
+  border: none;
+  border-radius: 16px 0 0 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 61;
+  box-shadow: -4px 0 24px rgba(124, 58, 237, 0.3);
+  animation: handlePulse 3s ease-in-out infinite;
+}
+
+/* 抽屉打开后停止脉冲动画 */
+.drawer-open .drawer-handle {
+  animation: none;
+  background: var(--bg-elevated);
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.3);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+@keyframes handlePulse {
+  0%, 100% {
+    box-shadow: -4px 0 24px rgba(124, 58, 237, 0.3);
+  }
+  50% {
+    box-shadow: -6px 0 36px rgba(124, 58, 237, 0.5), -3px 0 60px rgba(168, 85, 247, 0.2);
+  }
+}
+
+.drawer-handle:hover {
+  width: 60px;
+  left: -60px;
+  background: linear-gradient(160deg, var(--accent-hover), #c084fc);
+  box-shadow: -6px 0 32px rgba(124, 58, 237, 0.5);
+  animation: none;
+}
+
+.drawer-open .drawer-handle:hover {
+  background: var(--bg-secondary);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.4);
+}
+
+.drawer-handle-bar {
+  width: 3px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.drawer-open .drawer-handle-bar {
+  background: var(--text-muted);
+}
+
+.drawer-handle:hover .drawer-handle-bar {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.drawer-open .drawer-handle:hover .drawer-handle-bar {
+  background: var(--accent);
+}
+
+.drawer-handle-icon {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: bold;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.drawer-open .drawer-handle-icon {
+  color: var(--text-secondary);
+}
+
+.drawer-handle:hover .drawer-handle-icon {
+  color: #fff;
+}
+
+.drawer-open .drawer-handle:hover .drawer-handle-icon {
+  color: var(--accent);
+}
+
+/* 拉手上的文字标签 */
+.drawer-handle-label {
+  writing-mode: vertical-rl;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 4px;
+  white-space: nowrap;
+}
+
+.drawer-open .drawer-handle-label {
+  color: var(--text-secondary);
+}
+
+/* 编辑器切换按钮动画 */
+.drawer-toggle-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.drawer-toggle-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.drawer-toggle-btn:hover::after {
+  transform: translateX(100%);
+}
+
+/* 编辑按钮未激活时的呼吸脉冲动画 */
+.drawer-toggle-btn-pulse {
+  animation: btnPulse 3s ease-in-out infinite;
+  background: linear-gradient(135deg, var(--accent), #a855f7) !important;
+  color: white !important;
+  border: none;
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.35);
+}
+
+@keyframes btnPulse {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(124, 58, 237, 0.35);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(124, 58, 237, 0.5), 0 0 56px rgba(168, 85, 247, 0.15);
+    transform: scale(1.03);
+  }
+}
+
+/* ==================== 行间距滑块样式 ==================== */
+
+.line-height-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border);
+  outline: none;
+  transition: background 0.2s ease;
+}
+
+.line-height-slider:hover {
+  background: #484f58;
+}
+
+.line-height-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.line-height-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.6);
+}
+
+.line-height-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
+}

@@ -1,0 +1,424 @@
+/* ========================================
+   CodeCV 风格简历 - 完整样式
+   基于 CodeCV 设计规范
+   ======================================== */
+
+/* 关键变量 */
+:root {
+  --A4-width: 794px;
+  --A4-height: 1123px;
+  --markdown-primary-color: #5E5D5F;
+  --writable-heading: #e06c75;
+  --strong-color: #333;
+  --super-link: #4572e3;
+}
+
+/* ==================== 简历容器 ==================== */
+
+.resume-preview {
+  --resume-line-height: 22px;
+  font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", sans-serif;
+  font-size: 14px;
+  line-height: var(--resume-line-height);
+  letter-spacing: 0.6px;
+  color: var(--markdown-primary-color);
+  word-break: break-word;
+  position: relative;
+}
+
+/* ==================== 头像 ==================== */
+
+.resume-preview .resume-avatar {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  margin-left: 250px;
+  width: 90px;
+  height: 115px;
+  object-fit: cover;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+/* ==================== 标题样式 ==================== */
+
+.resume-preview h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+  margin: 9px 0 9px 0;
+  text-align: center;
+  line-height: 28px;
+}
+
+/* h1 后面紧跟的 p 标签（个人信息行）- 仅限 h1 + p */
+.resume-preview h1 + p {
+  text-align: center;
+  line-height: 24px;
+  margin: 0 0 10px 0;
+  color: #666;
+  font-size: 13px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.resume-preview h2 {
+  font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #000;
+  margin: 8px 0 4px 0;
+  padding-bottom: 2px;
+  border-bottom: 2px solid #000;
+  letter-spacing: 0;
+  line-height: var(--resume-line-height);
+}
+
+.resume-preview h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 4px 0 2px 0;
+  line-height: var(--resume-line-height);
+}
+
+/* ==================== 段落和文本 ==================== */
+
+.resume-preview p {
+  margin: 0;
+  line-height: var(--resume-line-height);
+}
+
+.resume-preview blockquote {
+  margin: 0 0 2px 0;
+  padding: 0;
+  border: none;
+  font-style: normal;
+  color: #888;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* h1 后面的 blockquote（个人信息行）居中 */
+.resume-preview h1 + blockquote,
+.resume-preview > blockquote:first-of-type {
+  text-align: center;
+  line-height: 24px;
+  margin: 0 0 14px 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.resume-preview strong {
+  font-weight: 600;
+  color: #333;
+}
+
+.resume-preview a {
+  color: var(--super-link);
+  text-decoration: none;
+}
+
+.resume-preview hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 6px 0;
+}
+
+/* ==================== 经历条目分割线 ==================== */
+
+/* 同一章节内，多个经历条目之间自动添加灰色分割线 */
+/* 当 flex-layout（经历标题行）前面是列表/段落等内容时，说明是新条目 */
+.resume-preview ul + .flex-layout,
+.resume-preview ol + .flex-layout,
+.resume-preview p + .flex-layout {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 6px;
+  margin-top: 4px;
+}
+
+/* h2 后紧跟的 flex-layout 不需要分割线（第一个条目） */
+.resume-preview h2 + .flex-layout {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+/* ==================== 列表 ==================== */
+
+.resume-preview ul {
+  margin: 0 0 2px 0;
+  padding-left: 16px;
+  list-style: none;
+}
+
+.resume-preview li {
+  margin-bottom: 0;
+  line-height: var(--resume-line-height);
+  position: relative;
+  padding-left: 12px;
+}
+
+.resume-preview li::before {
+  content: "•";
+  position: absolute;
+  left: -2px;
+  color: #000;
+  font-weight: 900;
+  font-size: 18px;
+  line-height: var(--resume-line-height);
+}
+
+/* ==================== Flex 四列布局 ==================== */
+
+.resume-preview .flex-layout {
+  display: flex !important;
+  align-items: center;
+  margin: 0;
+  padding: 2px 0;
+  line-height: var(--resume-line-height);
+}
+
+.resume-preview .flex-layout .flex-item {
+  font-size: 14px;
+  color: #333;
+  line-height: var(--resume-line-height);
+}
+
+/* 四列固定比例 —— 确保中间两列跨行对齐 */
+.resume-preview .flex-layout .flex-item:nth-child(1) {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.resume-preview .flex-layout .flex-item:nth-child(2) {
+  flex: 0 0 22%;
+  text-align: center;
+}
+
+.resume-preview .flex-layout .flex-item:nth-child(3) {
+  flex: 0 0 24%;
+  text-align: center;
+}
+
+.resume-preview .flex-layout .flex-item:nth-child(4) {
+  flex: 0 0 18%;
+  text-align: right;
+  color: #666;
+}
+
+/* 中间列为空时 —— 折叠中间列，首尾两端分布 */
+.resume-preview .flex-layout--collapsed .flex-item:nth-child(1) {
+  flex: 1 1 auto;
+}
+
+.resume-preview .flex-layout--collapsed .flex-item:nth-child(2),
+.resume-preview .flex-layout--collapsed .flex-item:nth-child(3) {
+  flex: 0 0 0;
+  width: 0;
+  overflow: hidden;
+}
+
+.resume-preview .flex-layout--collapsed .flex-item:nth-child(4) {
+  flex: 0 0 auto;
+}
+
+/* 确保 flex-layout 不被 p 标签影响 */
+.resume-preview p .flex-layout {
+  display: flex !important;
+}
+
+.resume-preview .flex-item strong {
+  font-weight: 600;
+  color: #333;
+}
+
+/* ==================== 公司图标 ==================== */
+
+.resume-preview .company-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: var(--resume-line-height);
+  vertical-align: middle;
+}
+
+.resume-preview .company-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 3px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.resume-preview .company-badge strong {
+  font-weight: 600;
+  color: #333;
+}
+
+/* ==================== 内联图标 @icon{} ==================== */
+
+.resume-preview .resume-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin-right: 3px;
+  vertical-align: -2px;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.resume-preview .resume-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ==================== 代码/标签样式 ==================== */
+
+/* 所有标签统一样式：灰底 + 红色粗体 */
+.resume-preview code {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 0 2px;
+  background-color: #f0f0f0;
+  border: 1px solid #d9d9d9;
+  border-radius: 3px;
+  color: rgb(233, 4, 4);
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* 蓝色标签也改成灰底红字 ~~text~~ */
+.resume-preview .tag-blue {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 0 2px;
+  background-color: #f0f0f0;
+  border: 1px solid #d9d9d9;
+  border-radius: 3px;
+  color: rgb(233, 4, 4);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* 紫色标签 ^^text^^ */
+.resume-preview .tag-purple {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 0 2px;
+  background: #f9f0ff;
+  border: 1px solid #d3adf7;
+  border-radius: 3px;
+  color: #531dab;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+/* 绿色标签 ++text++ */
+.resume-preview .tag-green {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 0 2px;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 3px;
+  color: #389e0d;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+/* 高亮红底白字 !!text!! */
+.resume-preview .tag-highlight {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 0 2px;
+  background: #ff4d4f;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+/* ==================== 打印优化 ==================== */
+
+/* 页面无边距，消除浏览器默认页眉页脚（URL、日期、标题） */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  .resume-preview {
+    background: white !important;
+    padding: 30px 40px !important;
+  }
+
+  /* 颜色精准打印 */
+  .resume-preview code,
+  .resume-preview .tag-blue,
+  .resume-preview .tag-purple,
+  .resume-preview .tag-green,
+  .resume-preview .tag-highlight,
+  .resume-preview .flex-layout {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ---- 分页控制：防止元素在页面中间被截断 ---- */
+
+  /* 标题不要在内部分页，且标题后面紧跟的内容不要与标题分离 */
+  .resume-preview h2,
+  .resume-preview h3 {
+    break-inside: avoid;
+    break-after: avoid;
+  }
+
+  /* 经历标题行（flex 布局）不要被分页截断 */
+  .resume-preview .flex-layout {
+    break-inside: avoid;
+  }
+
+  /* 列表项不要从中间断开 */
+  .resume-preview li {
+    break-inside: avoid;
+  }
+
+  /* 段落、引用不要从中间断开 */
+  .resume-preview p,
+  .resume-preview blockquote {
+    break-inside: avoid;
+  }
+
+  /* 孤行控制：段落在页顶/页底至少保留 2 行 */
+  .resume-preview p,
+  .resume-preview li {
+    orphans: 2;
+    widows: 2;
+  }
+
+  /* 经历条目分割线区块（flex + 后续内容）尽量不拆分 */
+  .resume-preview h2 + .flex-layout,
+  .resume-preview ul + .flex-layout,
+  .resume-preview ol + .flex-layout,
+  .resume-preview p + .flex-layout {
+    break-before: avoid;
+  }
+}
