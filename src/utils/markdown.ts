@@ -118,18 +118,22 @@ function estimateVisualWidth(text: string): number {
     .replace(/!!([^!]+)!!/g, '$1')
     .trim();
 
-  // 计算文本宽度：中文/CJK 字符 ≈14px，ASCII 字符 ≈8px
+  // 计算文本宽度：中文/CJK 字符 ≈15px，ASCII 字符 ≈8.5px（偏大估算，避免换行）
   let width = 0;
   for (const ch of stripped) {
-    width += ch.charCodeAt(0) > 0x7F ? 14 : 8;
+    width += ch.charCodeAt(0) > 0x7F ? 15 : 8.5;
   }
+
+  // 粗体额外宽度：font-weight:600 会让字符略宽
+  const hasBold = text.includes('**') || text.includes('<strong');
+  if (hasBold) width *= 1.05;
 
   // 标签额外宽度：padding(12) + border(2) + margin(4) ≈ 18px/个
   width += tagCount * 18;
   // 公司图标：icon(22) + gap(4) ≈ 26px
   if (hasIcon) width += 26;
 
-  return width;
+  return Math.ceil(width);
 }
 
 // 基于内容动态计算 Flex 四列最优宽度百分比
@@ -157,8 +161,8 @@ function calculateFlexColumnWidths(html: string): number[] {
     }
   }
 
-  // 加列内边距
-  const padded = maxWidths.map(w => w + 20);
+  // 加列内边距（留足缓冲，防止 nowrap 下溢出）
+  const padded = maxWidths.map(w => w + 28);
 
   // 转为百分比（基于 714px 内容区 = 794px - 40px×2 padding）
   const contentWidth = 714;

@@ -173,6 +173,7 @@
 
 .resume-preview .flex-layout {
   display: flex !important;
+  flex-wrap: nowrap !important;
   align-items: center;
   margin: 0;
   padding: 2px 0;
@@ -183,6 +184,8 @@
   font-size: 14px;
   color: #333;
   line-height: var(--resume-line-height);
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 /* 四列固定比例 —— 确保中间两列跨行对齐 */
