@@ -8,6 +8,7 @@ import './themes/themes.css';
 // localStorage 键名
 const STORAGE_KEY_CONTENT = 'resume-builder-content';
 const STORAGE_KEY_LINE_HEIGHT = 'resume-builder-line-height';
+const STORAGE_KEY_AVATAR = 'resume-builder-avatar';
 
 function App() {
   // 从 localStorage 读取初始值
@@ -23,7 +24,13 @@ function App() {
     return saved ? Number(saved) : 22;
   });
 
+  // 上传的头像（base64 Data URL）
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(() => {
+    return localStorage.getItem(STORAGE_KEY_AVATAR);
+  });
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<EditorRef>(null);
 
   // 处理预览区域点击，跳转到编辑器对应行
@@ -97,6 +104,31 @@ function App() {
     e.target.value = '';
   }, []);
 
+  // 上传头像
+  const handleAvatarUpload = useCallback(() => {
+    avatarInputRef.current?.click();
+  }, []);
+
+  const handleAvatarChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('请选择图片文件（jpg/png/webp 等）');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string;
+        if (dataUrl) {
+          localStorage.setItem(STORAGE_KEY_AVATAR, dataUrl);
+          setAvatarUrl(dataUrl);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+    e.target.value = '';
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-x-hidden">
       {/* 顶部导航栏 — 毛玻璃效果 */}
@@ -148,6 +180,13 @@ function App() {
                   {isEditorOpen ? '✕ 关闭编辑' : '✏️ 编辑简历'}
                 </button>
                 <button
+                  onClick={handleAvatarUpload}
+                  className="px-3 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)]/60 text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] hover:border-[var(--border)] transition-all duration-200"
+                  title={avatarUrl ? '已上传头像，点击更换' : '上传头像'}
+                >
+                  📷 头像
+                </button>
+                <button
                   onClick={handleImportMD}
                   className="px-3 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)]/60 text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] hover:border-[var(--border)] transition-all duration-200"
                 >
@@ -175,6 +214,13 @@ function App() {
                 onChange={handleFileChange}
                 className="hidden"
               />
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
             </div>
           </div>
         </div>
@@ -183,7 +229,7 @@ function App() {
       {/* 主内容区 - 简历居中，抽屉打开时左移 */}
       <main className={`flex-1 w-full p-6 content-area ${isEditorOpen ? 'content-shifted' : ''}`}>
         <div className="flex justify-center h-[calc(100vh-120px)]">
-          <Preview content={content} lineHeight={lineHeight} onSectionClick={handleSectionClick} />
+          <Preview content={content} lineHeight={lineHeight} avatarUrl={avatarUrl} onSectionClick={handleSectionClick} />
         </div>
       </main>
 

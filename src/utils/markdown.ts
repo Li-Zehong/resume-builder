@@ -206,15 +206,23 @@ function replaceIcons(text: string): string {
 }
 
 // 原始预处理函数 - 保持格式不变
-function preprocessMarkdown(markdown: string): string {
+function preprocessMarkdown(markdown: string, avatarUrl?: string | null): string {
   let html = markdown;
 
   // 0. 图标 @icon{name}
   html = replaceIcons(html);
 
   // 1. 头像 @avatar{url}
-  html = html.replace(/@avatar\{([^}]+)\}/g, 
-    '<img class="resume-avatar" src="$1" alt="头像" />');
+  //    本地路径（如 /avatar.jpg、avatar 等）优先使用上传的头像
+  //    使用占位符 __AVATAR_SRC__ 避免 base64 长串干扰 marked 解析，
+  //    实际替换在 parseMarkdown 的 Step 6 完成
+  html = html.replace(/@avatar\{([^}]+)\}/g, (_, url) => {
+    const src = url.trim();
+    if (avatarUrl && !/^https?:\/\//.test(src)) {
+      return `<img class="resume-avatar" src="__AVATAR_SRC__" alt="头像" />`;
+    }
+    return `<img class="resume-avatar" src="${src}" alt="头像" />`;
+  });
 
   // 2. 先处理所有 @company{} 语法（在 @flex 之前，避免 | 被错误分割）
   html = html.replace(/@company\{([^|}]+)(?:\|([^}]+))?\}/g, (_, name, customUrl) => {
@@ -262,7 +270,7 @@ function preprocessMarkdown(markdown: string): string {
 
 
 // 解析 Markdown 并添加行号属性（标记注入法：注入 → 预处理 → marked 解析 → 提取标记）
-export function parseMarkdown(markdown: string): string {
+export function parseMarkdown(markdown: string, avatarUrl?: string | null): string {
   const lines = markdown.split('\n');
 
   // ===== Step 1: 在 Markdown 源码中注入行号标记 =====
@@ -299,7 +307,7 @@ export function parseMarkdown(markdown: string): string {
   }).join('\n');
 
   // ===== Step 2: 预处理自定义语法（@avatar, @company, @flex, 标签）=====
-  const preprocessed = preprocessMarkdown(markedUp);
+  const preprocessed = preprocessMarkdown(markedUp, avatarUrl);
 
   // ===== Step 3: marked 解析 =====
   let html = marked.parse(preprocessed) as string;
@@ -333,11 +341,16 @@ export function parseMarkdown(markdown: string): string {
   // ===== Step 6: 清理残留标记 =====
   html = html.replace(/<span data-l="\d+"><\/span>/g, '');
 
+  // ===== Step 7: 将头像占位符替换为实际 URL（避免 base64 长串干扰 marked 解析）=====
+  if (avatarUrl) {
+    html = html.replace(/__AVATAR_SRC__/g, avatarUrl);
+  }
+
   return html;
 }
 
 // CodeCV 风格简历模板
-export const defaultResume = `@avatar{https://api.dicebear.com/7.x/avataaars/svg?seed=zhangsan&backgroundColor=b6e3f4}
+export const defaultResume = `@avatar{/avatar.jpg}
 
 # 黄文杰
 

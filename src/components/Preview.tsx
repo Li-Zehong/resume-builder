@@ -4,11 +4,12 @@ import { parseMarkdown } from '../utils/markdown';
 interface PreviewProps {
   content: string;
   lineHeight?: number;
+  avatarUrl?: string | null;
   onSectionClick?: (lineNumber: number) => void;
 }
 
-export const Preview: React.FC<PreviewProps> = ({ content, lineHeight = 22, onSectionClick }) => {
-  const html = useMemo(() => parseMarkdown(content), [content]);
+export const Preview: React.FC<PreviewProps> = ({ content, lineHeight = 22, avatarUrl, onSectionClick }) => {
+  const html = useMemo(() => parseMarkdown(content, avatarUrl), [content, avatarUrl]);
 
   // 处理预览区域的点击事件
   const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
