@@ -18,6 +18,7 @@ function App() {
   });
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [showFileMenu, setShowFileMenu] = useState(false);
 
   const [lineHeight, setLineHeight] = useState<number>(() => {
     const saved = localStorage.getItem(STORAGE_KEY_LINE_HEIGHT);
@@ -189,24 +190,43 @@ function App() {
                 >
                   📷 头像
                 </button>
-                <button
-                  onClick={handleImportMD}
-                  className="px-3 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)]/60 text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] hover:border-[var(--border)] transition-all duration-200"
-                >
-                  📂 导入
-                </button>
-                <button
-                  onClick={handleExportMD}
-                  className="px-3 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)]/60 text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] hover:border-[var(--border)] transition-all duration-200"
-                >
-                  💾 导出
-                </button>
-                <button
-                  onClick={handleReset}
-                  className="px-3 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)]/60 text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] hover:border-[var(--border)] transition-all duration-200"
-                >
-                  🔄 重置
-                </button>
+                {/* 文件下拉菜单 */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowFileMenu(!showFileMenu)}
+                    className="px-3 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)]/60 text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] hover:border-[var(--border)] transition-all duration-200 flex items-center gap-1"
+                  >
+                    📁 文件
+                    <svg className="w-3 h-3 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {showFileMenu && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowFileMenu(false)} />
+                      <div className="absolute right-0 mt-2 w-48 bg-[var(--bg-tertiary)] border border-[var(--border)] rounded-xl shadow-2xl shadow-black/50 z-50 overflow-hidden">
+                        <button
+                          onClick={() => { setShowFileMenu(false); handleImportMD(); }}
+                          className="w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--bg-elevated)] transition-colors flex items-center gap-2.5 text-[var(--text-primary)]"
+                        >
+                          📂 导入 MD 文件
+                        </button>
+                        <button
+                          onClick={() => { setShowFileMenu(false); handleExportMD(); }}
+                          className="w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--bg-elevated)] transition-colors flex items-center gap-2.5 text-[var(--text-primary)] border-t border-[var(--border-subtle)]"
+                        >
+                          💾 导出 MD 文件
+                        </button>
+                        <button
+                          onClick={() => { setShowFileMenu(false); handleReset(); }}
+                          className="w-full px-4 py-2.5 text-left text-sm hover:bg-[var(--bg-elevated)] transition-colors flex items-center gap-2.5 text-[var(--text-primary)] border-t border-[var(--border-subtle)]"
+                        >
+                          🔄 重置模板
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
                 <ExportButton />
               </div>
               {/* 隐藏的文件输入 */}
