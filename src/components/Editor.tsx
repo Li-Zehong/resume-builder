@@ -32,7 +32,7 @@ function highlightInline(text: string): string {
   html = html.replace(/@company\{([^}]*(?:\|[^}]*)?)\}/g, '<span class="hl-special">@company{$1}</span>');
 
   // @flex{...} — 整体高亮，内部的粗体/标签也会被处理
-  html = html.replace(/@flex\{([^}]+)\}/g, (match, inner) => {
+  html = html.replace(/@flex\{([^}]+)\}/g, (_match, inner) => {
     const highlightedInner = highlightInlineTags(inner);
     return `<span class="hl-flex-keyword">@flex</span><span class="hl-flex-brace">{</span>${highlightedInner}<span class="hl-flex-brace">}</span>`;
   });
