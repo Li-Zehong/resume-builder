@@ -67,6 +67,9 @@ function App() {
   const handleReset = useCallback(() => {
     if (confirm('确定要重置为默认模板吗？当前内容将会丢失。')) {
       setContent(defaultResume);
+      // 同时清除已上传的头像，恢复为默认头像
+      localStorage.removeItem(STORAGE_KEY_AVATAR);
+      setAvatarUrl(null);
     }
   }, []);
 
