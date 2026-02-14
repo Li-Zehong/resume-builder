@@ -19,22 +19,17 @@
 
 ## 🚀 快速开始
 
-### 环境要求
+### 环境准备
 
-- **Node.js** >= 16
-- **npm** >= 7（或 pnpm / yarn）
+1. 安装 [Node.js](https://nodejs.org/zh-cn) >= 16（LTS 版，安装包一路 Next）
+2. 国内建议配置淘宝镜像：`npm config set registry https://registry.npmmirror.com`
 
-### 安装依赖
+### 运行项目
 
 ```bash
 cd resume-builder
-npm install
-```
-
-### 启动开发服务器
-
-```bash
-npm run dev
+npm install        # 安装依赖
+npm run dev        # 启动开发服务器
 ```
 
 打开浏览器访问 **http://localhost:5173**
@@ -42,10 +37,8 @@ npm run dev
 ### 构建生产版本
 
 ```bash
-npm run build
+npm run build      # 产物在 dist/ 目录
 ```
-
-构建产物位于 `dist/` 目录，可直接部署到静态服务器。
 
 ---
 
